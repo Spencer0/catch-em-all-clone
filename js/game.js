@@ -57,7 +57,7 @@ class Player {
         this.direction = 'down';
     }
 
-    update(deltaTime, input, map) {
+    update(deltaTime, input, map, professorOak) {
         let newX = this.x;
         let newY = this.y;
 
@@ -82,7 +82,9 @@ class Player {
             this.currentSprite = this.sprites.down;
         }
 
-        if (!this.checkCollision(newX, newY, map) && !this.isCollidingWithBush(newX, newY, map)) {
+        if (!this.checkCollision(newX, newY, map) && 
+            !this.isCollidingWithBush(newX, newY, map) &&
+            !this.isCollidingWithProfessorOak(newX, newY, professorOak)) {
             this.x = newX;
             this.y = newY;
             this.stepOnTile(map);
@@ -119,6 +121,14 @@ class Player {
             y < tile.y + tile.height &&
             y + this.height > tile.y
         );
+    }
+
+    isCollidingWithProfessorOak(x, y, professorOak) {
+        return professorOak &&
+            x < professorOak.x + professorOak.width &&
+            x + this.width > professorOak.x &&
+            y < professorOak.y + professorOak.height &&
+            y + this.height > professorOak.y;
     }
 
     render(cameraX, cameraY) {
@@ -247,7 +257,7 @@ class Game {
     }
 
     update(deltaTime) {
-        this.player.update(deltaTime, this.input, this.map);
+        this.player.update(deltaTime, this.input, this.map, this.professorOak);
         this.updateCamera();
         this.resetSteppedTiles();
     }

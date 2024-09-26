@@ -1,9 +1,11 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Set canvas size to 2/3 of the screen size
-canvas.width = Math.min(window.innerWidth * 2/3, 800);
-canvas.height = Math.min(window.innerHeight * 2/3, 600);
+// Set canvas size to show 24x24 tiles
+const TILE_SIZE = 32;
+const VISIBLE_TILES = 24;
+canvas.width = TILE_SIZE * VISIBLE_TILES;
+canvas.height = TILE_SIZE * VISIBLE_TILES;
 
 // Set the game world size
 const WORLD_WIDTH = 2400;
@@ -13,14 +15,16 @@ class Tile {
     constructor(x, y, type) {
         this.x = x;
         this.y = y;
-        this.width = 32;
-        this.height = 32;
+        this.width = TILE_SIZE;
+        this.height = TILE_SIZE;
         this.type = type;
         this.image = document.getElementById(`${type}Tile`);
     }
 
-    render() {
-        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    render(cameraX, cameraY) {
+        const screenX = this.x - cameraX;
+        const screenY = this.y - cameraY;
+        ctx.drawImage(this.image, screenX, screenY, this.width, this.height);
     }
 }
 
@@ -28,8 +32,8 @@ class Player {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.width = 32;
-        this.height = 32;
+        this.width = TILE_SIZE;
+        this.height = TILE_SIZE;
         this.speed = 200;
     }
 
@@ -47,9 +51,9 @@ class Player {
             this.y = newY;
         }
 
-        // Keep player within canvas bounds
-        this.x = Math.max(0, Math.min(canvas.width - this.width, this.x));
-        this.y = Math.max(0, Math.min(canvas.height - this.height, this.y));
+        // Keep player within world bounds
+        this.x = Math.max(0, Math.min(WORLD_WIDTH - this.width, this.x));
+        this.y = Math.max(0, Math.min(WORLD_HEIGHT - this.height, this.y));
     }
 
     checkCollision(x, y, map) {
@@ -57,9 +61,11 @@ class Player {
         return CollisionManager.checkCollision(tempPlayer, map);
     }
 
-    render() {
+    render(cameraX, cameraY) {
+        const screenX = this.x - cameraX;
+        const screenY = this.y - cameraY;
         ctx.fillStyle = 'red';
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.fillRect(screenX, screenY, this.width, this.height);
     }
 }
 
@@ -68,7 +74,7 @@ class Game {
         this.lastTime = 0;
         this.accumulator = 0;
         this.step = 1 / 60;
-        this.player = new Player(canvas.width / 2, canvas.height / 2);
+        this.player = new Player(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
         this.camera = {
             x: 0,
             y: 0,
@@ -89,9 +95,9 @@ class Game {
         this.camera.x = this.player.x - this.camera.width / 2;
         this.camera.y = this.player.y - this.camera.height / 2;
 
-        // Clamp the camera to the map bounds
-        this.camera.x = Math.max(0, Math.min(this.camera.x, canvas.width - this.camera.width));
-        this.camera.y = Math.max(0, Math.min(this.camera.y, canvas.height - this.camera.height));
+        // Clamp the camera to the world bounds
+        this.camera.x = Math.max(0, Math.min(this.camera.x, WORLD_WIDTH - this.camera.width));
+        this.camera.y = Math.max(0, Math.min(this.camera.y, WORLD_HEIGHT - this.camera.height));
     }
 
     loadMap() {
@@ -126,7 +132,7 @@ class Game {
                 }
 
                 for (let j = 0; j < count; j++) {
-                    this.map.push(new Tile(x * 32, y * 32, tileType));
+                    this.map.push(new Tile(x * TILE_SIZE, y * TILE_SIZE, tileType));
                     x++;
                 }
             }
@@ -151,26 +157,18 @@ class Game {
 
     update(deltaTime) {
         this.player.update(deltaTime, this.input, this.map);
+        this.updateCamera();
     }
 
     render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.save();
-        ctx.scale(canvas.width / WORLD_WIDTH, canvas.height / WORLD_HEIGHT);
-        ctx.translate(-this.camera.x, -this.camera.y);
         this.map.forEach(tile => {
-            if (tile.x + tile.width > this.camera.x && tile.x < this.camera.x + WORLD_WIDTH &&
-                tile.y + tile.height > this.camera.y && tile.y < this.camera.y + WORLD_HEIGHT) {
-                tile.render();
+            if (tile.x + tile.width > this.camera.x && tile.x < this.camera.x + this.camera.width &&
+                tile.y + tile.height > this.camera.y && tile.y < this.camera.y + this.camera.height) {
+                tile.render(this.camera.x, this.camera.y);
             }
         });
-        this.player.render();
-        ctx.restore();
-    }
-
-    update(deltaTime) {
-        this.player.update(deltaTime, this.input, this.map);
-        this.updateCamera();
+        this.player.render(this.camera.x, this.camera.y);
     }
 
     start() {

@@ -64,9 +64,12 @@ class Game {
         this.accumulator = 0;
         this.step = 1 / 60;
         this.player = new Player(canvas.width / 2, canvas.height / 2);
-        // Adjust camera to center on player
-        this.cameraX = this.player.x - canvas.width / 2;
-        this.cameraY = this.player.y - canvas.height / 2;
+        this.camera = {
+            x: 0,
+            y: 0,
+            width: canvas.width,
+            height: canvas.height
+        };
         this.input = {};
         this.map = [];
 
@@ -74,6 +77,16 @@ class Game {
         window.addEventListener('keyup', (e) => this.input[e.code] = false);
 
         this.loadMap();
+    }
+
+    updateCamera() {
+        // Center the camera on the player
+        this.camera.x = this.player.x - this.camera.width / 2;
+        this.camera.y = this.player.y - this.camera.height / 2;
+
+        // Clamp the camera to the map bounds
+        this.camera.x = Math.max(0, Math.min(this.camera.x, canvas.width - this.camera.width));
+        this.camera.y = Math.max(0, Math.min(this.camera.y, canvas.height - this.camera.height));
     }
 
     loadMap() {
@@ -137,10 +150,10 @@ class Game {
     render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
-        ctx.translate(-this.cameraX, -this.cameraY);
+        ctx.translate(-this.camera.x, -this.camera.y);
         this.map.forEach(tile => {
-            if (tile.x + tile.width > this.cameraX && tile.x < this.cameraX + canvas.width &&
-                tile.y + tile.height > this.cameraY && tile.y < this.cameraY + canvas.height) {
+            if (tile.x + tile.width > this.camera.x && tile.x < this.camera.x + this.camera.width &&
+                tile.y + tile.height > this.camera.y && tile.y < this.camera.y + this.camera.height) {
                 tile.render();
             }
         });
@@ -150,12 +163,7 @@ class Game {
 
     update(deltaTime) {
         this.player.update(deltaTime, this.input, this.map);
-        // Update camera position
-        this.cameraX = this.player.x - canvas.width / 2;
-        this.cameraY = this.player.y - canvas.height / 2;
-        // Clamp camera to map bounds
-        this.cameraX = Math.max(0, Math.min(this.cameraX, 2400 - canvas.width));
-        this.cameraY = Math.max(0, Math.min(this.cameraY, 1824 - canvas.height));
+        this.updateCamera();
     }
 
     start() {

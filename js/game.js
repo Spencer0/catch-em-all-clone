@@ -52,8 +52,6 @@ class Player {
             newX -= this.speed * deltaTime;
             this.direction = 'left';
             this.currentSprite = this.sprites.right;
-            ctx.save();
-            ctx.scale(-1, 1);
         }
         if (input.ArrowRight) {
             newX += this.speed * deltaTime;
@@ -89,14 +87,14 @@ class Player {
     render(cameraX, cameraY) {
         const screenX = this.x - cameraX;
         const screenY = this.y - cameraY;
+        ctx.save();
         if (this.direction === 'left') {
-            ctx.save();
             ctx.scale(-1, 1);
             ctx.drawImage(this.currentSprite, -screenX - this.width, screenY, this.width, this.height);
-            ctx.restore();
         } else {
             ctx.drawImage(this.currentSprite, screenX, screenY, this.width, this.height);
         }
+        ctx.restore();
     }
 }
 

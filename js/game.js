@@ -1,15 +1,15 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Set canvas size to show 24x24 tiles
-const TILE_SIZE = 32;
-const VISIBLE_TILES = 24;
+// Set canvas size to show 16x16 tiles
+const TILE_SIZE = 48;
+const VISIBLE_TILES = 16;
 canvas.width = TILE_SIZE * VISIBLE_TILES;
 canvas.height = TILE_SIZE * VISIBLE_TILES;
 
 // Set the game world size
-const WORLD_WIDTH = 2400;
-const WORLD_HEIGHT = 1824;
+const WORLD_WIDTH = 3600;
+const WORLD_HEIGHT = 2736;
 
 class Tile {
     constructor(x, y, type) {
@@ -34,7 +34,7 @@ class Player {
         this.y = y;
         this.width = TILE_SIZE;
         this.height = TILE_SIZE;
-        this.speed = 200;
+        this.speed = 300;
         this.sprite = document.getElementById('playerDown');
         this.direction = 'down';
     }

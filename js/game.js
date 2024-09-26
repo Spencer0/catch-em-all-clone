@@ -35,7 +35,11 @@ class Player {
         this.width = TILE_SIZE;
         this.height = TILE_SIZE;
         this.speed = 300;
-        this.sprite = document.getElementById('playerDown');
+        this.sprites = {
+            down: document.getElementById('playerDown'),
+            up: document.getElementById('playerUp')
+        };
+        this.currentSprite = this.sprites.down;
         this.direction = 'down';
     }
 
@@ -54,10 +58,12 @@ class Player {
         if (input.ArrowUp) {
             newY -= this.speed * deltaTime;
             this.direction = 'up';
+            this.currentSprite = this.sprites.up;
         }
         if (input.ArrowDown) {
             newY += this.speed * deltaTime;
             this.direction = 'down';
+            this.currentSprite = this.sprites.down;
         }
 
         if (!this.checkCollision(newX, newY, map)) {
@@ -78,7 +84,7 @@ class Player {
     render(cameraX, cameraY) {
         const screenX = this.x - cameraX;
         const screenY = this.y - cameraY;
-        ctx.drawImage(this.sprite, screenX, screenY, this.width, this.height);
+        ctx.drawImage(this.currentSprite, screenX, screenY, this.width, this.height);
     }
 }
 

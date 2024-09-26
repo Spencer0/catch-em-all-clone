@@ -19,12 +19,25 @@ class Tile {
         this.height = TILE_SIZE;
         this.type = type;
         this.image = document.getElementById(`${type}Tile`);
+        this.steppedImage = type === 'longGrass' ? document.getElementById('longGrassSteppedTile') : null;
+        this.isSteppedOn = false;
     }
 
     render(cameraX, cameraY) {
         const screenX = this.x - cameraX;
         const screenY = this.y - cameraY;
-        ctx.drawImage(this.image, screenX, screenY, this.width, this.height);
+        const imageToRender = this.isSteppedOn && this.steppedImage ? this.steppedImage : this.image;
+        ctx.drawImage(imageToRender, screenX, screenY, this.width, this.height);
+    }
+
+    step() {
+        if (this.type === 'longGrass') {
+            this.isSteppedOn = true;
+        }
+    }
+
+    reset() {
+        this.isSteppedOn = false;
     }
 }
 
@@ -72,11 +85,24 @@ class Player {
         if (!this.checkCollision(newX, newY, map) && !this.isCollidingWithBush(newX, newY, map)) {
             this.x = newX;
             this.y = newY;
+            this.stepOnTile(map);
         }
 
         // Keep player within world bounds
         this.x = Math.max(0, Math.min(WORLD_WIDTH - this.width, this.x));
         this.y = Math.max(0, Math.min(WORLD_HEIGHT - this.height, this.y));
+    }
+
+    stepOnTile(map) {
+        const playerCenterX = this.x + this.width / 2;
+        const playerCenterY = this.y + this.height / 2;
+        map.forEach(tile => {
+            if (tile.type === 'longGrass' &&
+                playerCenterX >= tile.x && playerCenterX < tile.x + tile.width &&
+                playerCenterY >= tile.y && playerCenterY < tile.y + tile.height) {
+                tile.step();
+            }
+        });
     }
 
     checkCollision(x, y, map) {
@@ -211,6 +237,20 @@ class Game {
     update(deltaTime) {
         this.player.update(deltaTime, this.input, this.map);
         this.updateCamera();
+        this.resetSteppedTiles();
+    }
+
+    resetSteppedTiles() {
+        const playerCenterX = this.player.x + this.player.width / 2;
+        const playerCenterY = this.player.y + this.player.height / 2;
+        this.map.forEach(tile => {
+            if (tile.type === 'longGrass' && tile.isSteppedOn) {
+                if (playerCenterX < tile.x || playerCenterX >= tile.x + tile.width ||
+                    playerCenterY < tile.y || playerCenterY >= tile.y + tile.height) {
+                    tile.reset();
+                }
+            }
+        });
     }
 
     render() {

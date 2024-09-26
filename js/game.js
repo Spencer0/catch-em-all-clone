@@ -2,7 +2,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 canvas.width = 800;
-canvas.height = 600;
+canvas.height = 608;
 
 class Tile {
     constructor(x, y, type) {
@@ -11,8 +11,7 @@ class Tile {
         this.width = 32;
         this.height = 32;
         this.type = type;
-        this.image = new Image();
-        this.image.src = `assets/${type}.svg`;
+        this.image = document.getElementById(`${type}Tile`);
     }
 
     render() {
@@ -66,25 +65,30 @@ class Game {
         this.step = 1 / 60;
         this.player = new Player(canvas.width / 2, canvas.height / 2);
         this.input = {};
-        this.map = this.createMap();
+        this.map = [];
 
         window.addEventListener('keydown', (e) => this.input[e.code] = true);
         window.addEventListener('keyup', (e) => this.input[e.code] = false);
+
+        this.loadMap();
     }
 
-    createMap() {
-        const map = [];
-        const mapWidth = canvas.width / 32;
-        const mapHeight = canvas.height / 32;
+    loadMap() {
+        fetch('js/map.json')
+            .then(response => response.json())
+            .then(data => {
+                this.createMap(data);
+            });
+    }
 
-        for (let y = 0; y < mapHeight; y++) {
-            for (let x = 0; x < mapWidth; x++) {
-                const type = Math.random() < 0.8 ? 'grass' : 'water';
-                map.push(new Tile(x * 32, y * 32, type));
+    createMap(mapData) {
+        this.map = [];
+        for (let y = 0; y < mapData.height; y++) {
+            for (let x = 0; x < mapData.width; x++) {
+                const tileType = mapData.tiles[y][x] === 'w' ? 'water' : 'grass';
+                this.map.push(new Tile(x * 32, y * 32, tileType));
             }
         }
-
-        return map;
     }
 
     loop(currentTime) {

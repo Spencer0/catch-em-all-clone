@@ -8,8 +8,8 @@ canvas.width = TILE_SIZE * VISIBLE_TILES;
 canvas.height = TILE_SIZE * VISIBLE_TILES;
 
 // Set the game world size
-const WORLD_WIDTH = 3600;
-const WORLD_HEIGHT = 2736;
+const WORLD_WIDTH = 10800;
+const WORLD_HEIGHT = 5472;
 
 class Tile {
     constructor(x, y, type) {

@@ -49,16 +49,8 @@ class Player {
     }
 
     checkCollision(x, y, map) {
-        for (let tile of map) {
-            if (tile.type === 'water' &&
-                x < tile.x + tile.width &&
-                x + this.width > tile.x &&
-                y < tile.y + tile.height &&
-                y + this.height > tile.y) {
-                return true;
-            }
-        }
-        return false;
+        const tempPlayer = { x, y, width: this.width, height: this.height };
+        return CollisionManager.checkCollision(tempPlayer, map);
     }
 
     render() {

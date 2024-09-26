@@ -37,7 +37,8 @@ class Player {
         this.speed = 300;
         this.sprites = {
             down: document.getElementById('playerDown'),
-            up: document.getElementById('playerUp')
+            up: document.getElementById('playerUp'),
+            right: document.getElementById('playerRight')
         };
         this.currentSprite = this.sprites.down;
         this.direction = 'down';
@@ -50,10 +51,14 @@ class Player {
         if (input.ArrowLeft) {
             newX -= this.speed * deltaTime;
             this.direction = 'left';
+            this.currentSprite = this.sprites.right;
+            ctx.save();
+            ctx.scale(-1, 1);
         }
         if (input.ArrowRight) {
             newX += this.speed * deltaTime;
             this.direction = 'right';
+            this.currentSprite = this.sprites.right;
         }
         if (input.ArrowUp) {
             newY -= this.speed * deltaTime;
@@ -84,7 +89,14 @@ class Player {
     render(cameraX, cameraY) {
         const screenX = this.x - cameraX;
         const screenY = this.y - cameraY;
-        ctx.drawImage(this.currentSprite, screenX, screenY, this.width, this.height);
+        if (this.direction === 'left') {
+            ctx.save();
+            ctx.scale(-1, 1);
+            ctx.drawImage(this.currentSprite, -screenX - this.width, screenY, this.width, this.height);
+            ctx.restore();
+        } else {
+            ctx.drawImage(this.currentSprite, screenX, screenY, this.width, this.height);
+        }
     }
 }
 

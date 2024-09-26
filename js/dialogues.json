@@ -1,0 +1,24 @@
+{
+  "professorOak": [
+    {
+      "speaker": "Professor Oak",
+      "text": "Hello there! Welcome to the world of Pokémon!"
+    },
+    {
+      "speaker": "Professor Oak",
+      "text": "My name is Oak! People call me the Pokémon Prof!"
+    },
+    {
+      "speaker": "Professor Oak",
+      "text": "This world is inhabited by creatures called Pokémon!"
+    },
+    {
+      "speaker": "Professor Oak",
+      "text": "For some people, Pokémon are pets. Others use them for fights."
+    },
+    {
+      "speaker": "Professor Oak",
+      "text": "Myself... I study Pokémon as a profession."
+    }
+  ]
+}

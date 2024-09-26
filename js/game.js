@@ -55,6 +55,15 @@ class Player {
         };
         this.currentSprite = this.sprites.down;
         this.direction = 'down';
+        this.interactionDistance = TILE_SIZE * 1.5;
+    }
+
+    checkNearbyNPC(professorOak) {
+        const distance = Math.sqrt(
+            Math.pow(this.x - professorOak.x, 2) + 
+            Math.pow(this.y - professorOak.y, 2)
+        );
+        return distance <= this.interactionDistance;
     }
 
     update(deltaTime, input, map, professorOak) {
@@ -161,11 +170,23 @@ class Game {
         this.map = [];
         this.spawnPoint = { x: 0, y: 0 };
         this.professorOak = null;
+        this.dialogueManager = null;
+        this.dialogues = {};
 
         window.addEventListener('keydown', (e) => this.input[e.code] = true);
         window.addEventListener('keyup', (e) => this.input[e.code] = false);
 
         this.loadMap();
+        this.loadDialogues();
+    }
+
+    loadDialogues() {
+        fetch('js/dialogues.json')
+            .then(response => response.json())
+            .then(data => {
+                this.dialogues = data;
+                this.dialogueManager = new DialogueManager(this.dialogues);
+            });
     }
 
     updateCamera() {
@@ -240,7 +261,7 @@ class Game {
     }
 
     loop(currentTime) {
-        if (!this.player) return; // Don't run the loop if player is not created yet
+        if (!this.player || !this.dialogueManager) return; // Don't run the loop if player or dialogueManager is not created yet
 
         const deltaTime = (currentTime - this.lastTime) / 1000;
         this.lastTime = currentTime;
@@ -248,7 +269,7 @@ class Game {
         this.accumulator += deltaTime;
 
         while (this.accumulator >= this.step) {
-            this.update(this.step);
+            this.update(this.step, currentTime);
             this.accumulator -= this.step;
         }
 
@@ -256,10 +277,23 @@ class Game {
         requestAnimationFrame(this.loop.bind(this));
     }
 
-    update(deltaTime) {
-        this.player.update(deltaTime, this.input, this.map, this.professorOak);
-        this.updateCamera();
-        this.resetSteppedTiles();
+    update(deltaTime, currentTime) {
+        if (this.dialogueManager.isActive()) {
+            this.dialogueManager.update(currentTime);
+            if (this.input.Space) {
+                this.dialogueManager.progress();
+                this.input.Space = false; // Reset space key to prevent multiple triggers
+            }
+        } else {
+            this.player.update(deltaTime, this.input, this.map, this.professorOak);
+            this.updateCamera();
+            this.resetSteppedTiles();
+
+            if (this.input.Space && this.player.checkNearbyNPC(this.professorOak)) {
+                this.dialogueManager.startDialogue('professorOak');
+                this.input.Space = false; // Reset space key to prevent multiple triggers
+            }
+        }
     }
 
     resetSteppedTiles() {
@@ -292,6 +326,10 @@ class Game {
             }
         }
         this.player.render(this.camera.x, this.camera.y);
+
+        if (this.dialogueManager && this.dialogueManager.isActive()) {
+            this.dialogueManager.render(ctx);
+        }
     }
 
     start() {
@@ -302,3 +340,91 @@ class Game {
 
 const game = new Game();
 // game.start() is now called after the map is loaded
+class DialogueManager {
+    constructor(dialogues) {
+        this.dialogues = dialogues;
+        this.currentDialogue = null;
+        this.currentIndex = 0;
+        this.text = '';
+        this.displayedText = '';
+        this.isTyping = false;
+        this.typingSpeed = 50; // milliseconds per character
+        this.lastTypingTime = 0;
+    }
+
+    startDialogue(npcKey) {
+        this.currentDialogue = this.dialogues[npcKey];
+        this.currentIndex = 0;
+        this.setText(this.currentDialogue[this.currentIndex].text);
+    }
+
+    setText(text) {
+        this.text = text;
+        this.displayedText = '';
+        this.isTyping = true;
+        this.lastTypingTime = performance.now();
+    }
+
+    update(currentTime) {
+        if (this.isTyping) {
+            if (currentTime - this.lastTypingTime > this.typingSpeed) {
+                this.displayedText += this.text[this.displayedText.length];
+                this.lastTypingTime = currentTime;
+                if (this.displayedText.length === this.text.length) {
+                    this.isTyping = false;
+                }
+            }
+        }
+    }
+
+    render(ctx) {
+        // Render dialogue box
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(50, canvas.height - 150, canvas.width - 100, 100);
+        
+        // Render text
+        ctx.fillStyle = 'white';
+        ctx.font = '20px Arial';
+        ctx.fillText(this.currentDialogue[this.currentIndex].speaker + ':', 70, canvas.height - 120);
+        this.wrapText(ctx, this.displayedText, 70, canvas.height - 90, canvas.width - 140, 25);
+    }
+
+    wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(' ');
+        let line = '';
+
+        for (let n = 0; n < words.length; n++) {
+            const testLine = line + words[n] + ' ';
+            const metrics = ctx.measureText(testLine);
+            const testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+                ctx.fillText(line, x, y);
+                line = words[n] + ' ';
+                y += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+        ctx.fillText(line, x, y);
+    }
+
+    progress() {
+        if (this.isTyping) {
+            // Fast forward text
+            this.displayedText = this.text;
+            this.isTyping = false;
+        } else {
+            // Move to next dialogue
+            this.currentIndex++;
+            if (this.currentIndex < this.currentDialogue.length) {
+                this.setText(this.currentDialogue[this.currentIndex].text);
+            } else {
+                this.currentDialogue = null;
+            }
+        }
+    }
+
+    isActive() {
+        return this.currentDialogue !== null;
+    }
+}

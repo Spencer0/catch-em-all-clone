@@ -55,7 +55,7 @@ class Player {
         };
         this.currentSprite = this.sprites.down;
         this.direction = 'down';
-        this.interactionDistance = TILE_SIZE * 1.5;
+        this.interactionDistance = TILE_SIZE * 2.5; // Increased from 1.5 to 2.5
     }
 
     checkNearbyNPC(professorOak) {
@@ -133,11 +133,12 @@ class Player {
     }
 
     isCollidingWithProfessorOak(x, y, professorOak) {
+        const collisionMargin = 10; // Pixels of overlap allowed
         return professorOak &&
-            x < professorOak.x + professorOak.width &&
-            x + this.width > professorOak.x &&
-            y < professorOak.y + professorOak.height &&
-            y + this.height > professorOak.y;
+            x < professorOak.x + professorOak.width - collisionMargin &&
+            x + this.width > professorOak.x + collisionMargin &&
+            y < professorOak.y + professorOak.height - collisionMargin &&
+            y + this.height > professorOak.y + collisionMargin;
     }
 
     render(cameraX, cameraY) {

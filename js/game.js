@@ -180,7 +180,6 @@ class Game {
     createMap(mapData) {
         this.map = [];
         let y = 0;
-        let rightmostGrassTile = null;
         for (let row of mapData.tiles) {
             let x = 0;
             let i = 0;
@@ -196,6 +195,16 @@ class Game {
                         tileType = 'grass';
                         this.spawnPoint = { x: x * TILE_SIZE, y: y * TILE_SIZE };
                         break;
+                    case 'o':
+                        tileType = 'grass';
+                        this.professorOak = {
+                            x: x * TILE_SIZE,
+                            y: y * TILE_SIZE,
+                            width: TILE_SIZE,
+                            height: TILE_SIZE,
+                            image: document.getElementById('professorOak')
+                        };
+                        break;
                     default: tileType = 'grass';
                 }
                 
@@ -210,9 +219,6 @@ class Game {
                 for (let j = 0; j < count; j++) {
                     let tile = new Tile(x * TILE_SIZE, y * TILE_SIZE, tileType);
                     this.map.push(tile);
-                    if (tileType === 'grass') {
-                        rightmostGrassTile = tile;
-                    }
                     x++;
                 }
             }
@@ -221,17 +227,6 @@ class Game {
 
         // Create the player at the spawn point
         this.player = new Player(this.spawnPoint.x, this.spawnPoint.y);
-
-        // Place Professor Oak on the rightmost grass tile
-        if (rightmostGrassTile) {
-            this.professorOak = {
-                x: rightmostGrassTile.x,
-                y: rightmostGrassTile.y,
-                width: TILE_SIZE,
-                height: TILE_SIZE,
-                image: document.getElementById('professorOak')
-            };
-        }
     }
 
     loop(currentTime) {

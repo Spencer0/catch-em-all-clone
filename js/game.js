@@ -85,7 +85,12 @@ class Game {
         this.map = [];
         for (let y = 0; y < mapData.height; y++) {
             for (let x = 0; x < mapData.width; x++) {
-                const tileType = mapData.tiles[y][x] === 'w' ? 'water' : 'grass';
+                let tileType;
+                switch (mapData.tiles[y][x]) {
+                    case 'w': tileType = 'water'; break;
+                    case 'b': tileType = 'bridge'; break;
+                    default: tileType = 'grass';
+                }
                 this.map.push(new Tile(x * 32, y * 32, tileType));
             }
         }

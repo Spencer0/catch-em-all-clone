@@ -106,6 +106,7 @@ class Game {
             .then(response => response.json())
             .then(data => {
                 this.createMap(data);
+                this.start(); // Start the game loop after map is loaded
             });
     }
 
@@ -149,6 +150,8 @@ class Game {
     }
 
     loop(currentTime) {
+        if (!this.player) return; // Don't run the loop if player is not created yet
+
         const deltaTime = (currentTime - this.lastTime) / 1000;
         this.lastTime = currentTime;
 
@@ -180,9 +183,10 @@ class Game {
     }
 
     start() {
+        this.lastTime = performance.now();
         requestAnimationFrame(this.loop.bind(this));
     }
 }
 
 const game = new Game();
-game.start();
+// game.start() is now called after the map is loaded

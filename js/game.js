@@ -150,6 +150,7 @@ class Game {
         this.input = {};
         this.map = [];
         this.spawnPoint = { x: 0, y: 0 };
+        this.professorOak = null;
 
         window.addEventListener('keydown', (e) => this.input[e.code] = true);
         window.addEventListener('keyup', (e) => this.input[e.code] = false);
@@ -179,6 +180,7 @@ class Game {
     createMap(mapData) {
         this.map = [];
         let y = 0;
+        let rightmostGrassTile = null;
         for (let row of mapData.tiles) {
             let x = 0;
             let i = 0;
@@ -206,7 +208,11 @@ class Game {
                 }
 
                 for (let j = 0; j < count; j++) {
-                    this.map.push(new Tile(x * TILE_SIZE, y * TILE_SIZE, tileType));
+                    let tile = new Tile(x * TILE_SIZE, y * TILE_SIZE, tileType);
+                    this.map.push(tile);
+                    if (tileType === 'grass') {
+                        rightmostGrassTile = tile;
+                    }
                     x++;
                 }
             }
@@ -215,6 +221,17 @@ class Game {
 
         // Create the player at the spawn point
         this.player = new Player(this.spawnPoint.x, this.spawnPoint.y);
+
+        // Place Professor Oak on the rightmost grass tile
+        if (rightmostGrassTile) {
+            this.professorOak = {
+                x: rightmostGrassTile.x,
+                y: rightmostGrassTile.y,
+                width: TILE_SIZE,
+                height: TILE_SIZE,
+                image: document.getElementById('professorOak')
+            };
+        }
     }
 
     loop(currentTime) {
@@ -261,6 +278,14 @@ class Game {
                 tile.render(this.camera.x, this.camera.y);
             }
         });
+        if (this.professorOak) {
+            const screenX = this.professorOak.x - this.camera.x;
+            const screenY = this.professorOak.y - this.camera.y;
+            if (screenX + this.professorOak.width > 0 && screenX < canvas.width &&
+                screenY + this.professorOak.height > 0 && screenY < canvas.height) {
+                ctx.drawImage(this.professorOak.image, screenX, screenY, this.professorOak.width, this.professorOak.height);
+            }
+        }
         this.player.render(this.camera.x, this.camera.y);
     }
 

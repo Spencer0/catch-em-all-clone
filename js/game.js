@@ -173,12 +173,39 @@ class Game {
         this.professorOak = null;
         this.dialogueManager = null;
         this.dialogues = {};
+        this.menuManager = new MenuManager(this);
 
-        window.addEventListener('keydown', (e) => this.input[e.code] = true);
+        window.addEventListener('keydown', (e) => {
+            this.input[e.code] = true;
+            if (e.code === 'Enter') {
+                this.toggleMenu();
+            }
+        });
         window.addEventListener('keyup', (e) => this.input[e.code] = false);
 
         this.loadMap();
         this.loadDialogues();
+        this.setupMainMenu();
+    }
+
+    setupMainMenu() {
+        const mainMenu = new Menu(this);
+        mainMenu.addItem("Pokemon", () => {
+            console.log("Pokemon menu option selected");
+            // Add Pokemon-related functionality here in the future
+        });
+        mainMenu.addItem("Exit Menu", () => {
+            this.menuManager.closeMenu();
+        });
+        this.mainMenu = mainMenu;
+    }
+
+    toggleMenu() {
+        if (this.menuManager.isMenuOpen()) {
+            this.menuManager.closeMenu();
+        } else {
+            this.menuManager.openMenu(this.mainMenu);
+        }
     }
 
     loadDialogues() {

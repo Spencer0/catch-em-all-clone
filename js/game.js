@@ -1,8 +1,8 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-canvas.width = 800;
-canvas.height = 608;
+canvas.width = 2400;
+canvas.height = 1824;
 
 class Tile {
     constructor(x, y, type) {
@@ -64,6 +64,9 @@ class Game {
         this.accumulator = 0;
         this.step = 1 / 60;
         this.player = new Player(canvas.width / 2, canvas.height / 2);
+        // Adjust camera to center on player
+        this.cameraX = this.player.x - canvas.width / 2;
+        this.cameraY = this.player.y - canvas.height / 2;
         this.input = {};
         this.map = [];
 
@@ -83,16 +86,32 @@ class Game {
 
     createMap(mapData) {
         this.map = [];
-        for (let y = 0; y < mapData.height; y++) {
-            for (let x = 0; x < mapData.width; x++) {
+        let y = 0;
+        for (let row of mapData.tiles) {
+            let x = 0;
+            let i = 0;
+            while (i < row.length) {
                 let tileType;
-                switch (mapData.tiles[y][x]) {
+                switch (row[i]) {
                     case 'w': tileType = 'water'; break;
                     case 'b': tileType = 'bridge'; break;
                     default: tileType = 'grass';
                 }
-                this.map.push(new Tile(x * 32, y * 32, tileType));
+                
+                let count = 1;
+                if (i + 1 < row.length && !isNaN(parseInt(row[i + 1]))) {
+                    count = parseInt(row.slice(i + 1));
+                    i = row.length; // Move to end of row
+                } else {
+                    i++;
+                }
+
+                for (let j = 0; j < count; j++) {
+                    this.map.push(new Tile(x * 32, y * 32, tileType));
+                    x++;
+                }
             }
+            y++;
         }
     }
 
@@ -117,8 +136,26 @@ class Game {
 
     render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        this.map.forEach(tile => tile.render());
+        ctx.save();
+        ctx.translate(-this.cameraX, -this.cameraY);
+        this.map.forEach(tile => {
+            if (tile.x + tile.width > this.cameraX && tile.x < this.cameraX + canvas.width &&
+                tile.y + tile.height > this.cameraY && tile.y < this.cameraY + canvas.height) {
+                tile.render();
+            }
+        });
         this.player.render();
+        ctx.restore();
+    }
+
+    update(deltaTime) {
+        this.player.update(deltaTime, this.input, this.map);
+        // Update camera position
+        this.cameraX = this.player.x - canvas.width / 2;
+        this.cameraY = this.player.y - canvas.height / 2;
+        // Clamp camera to map bounds
+        this.cameraX = Math.max(0, Math.min(this.cameraX, 2400 - canvas.width));
+        this.cameraY = Math.max(0, Math.min(this.cameraY, 1824 - canvas.height));
     }
 
     start() {

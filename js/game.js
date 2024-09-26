@@ -163,6 +163,7 @@ class Game {
                     case 'b': tileType = 'bridge'; break;
                     case 'g': tileType = 'grass'; break;
                     case 'u': tileType = 'bush'; break;
+                    case 'l': tileType = 'longGrass'; break;
                     case 's': 
                         tileType = 'grass';
                         this.spawnPoint = { x: x * TILE_SIZE, y: y * TILE_SIZE };

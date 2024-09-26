@@ -10,4 +10,6 @@ body {
 
 #gameCanvas {
     border: 1px solid #000;
+    max-width: 66.67vw;
+    max-height: 66.67vh;
 }

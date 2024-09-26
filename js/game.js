@@ -1,8 +1,13 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-canvas.width = 2400;
-canvas.height = 1824;
+// Set canvas size to 2/3 of the screen size
+canvas.width = Math.min(window.innerWidth * 2/3, 800);
+canvas.height = Math.min(window.innerHeight * 2/3, 600);
+
+// Set the game world size
+const WORLD_WIDTH = 2400;
+const WORLD_HEIGHT = 1824;
 
 class Tile {
     constructor(x, y, type) {
@@ -108,13 +113,14 @@ class Game {
                 switch (row[i]) {
                     case 'w': tileType = 'water'; break;
                     case 'b': tileType = 'bridge'; break;
+                    case 'g': tileType = 'grass'; break;
                     default: tileType = 'grass';
                 }
                 
                 let count = 1;
                 if (i + 1 < row.length && !isNaN(parseInt(row[i + 1]))) {
                     count = parseInt(row.slice(i + 1));
-                    i = row.length; // Move to end of row
+                    i += count.toString().length + 1;
                 } else {
                     i++;
                 }
@@ -150,10 +156,11 @@ class Game {
     render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
+        ctx.scale(canvas.width / WORLD_WIDTH, canvas.height / WORLD_HEIGHT);
         ctx.translate(-this.camera.x, -this.camera.y);
         this.map.forEach(tile => {
-            if (tile.x + tile.width > this.camera.x && tile.x < this.camera.x + this.camera.width &&
-                tile.y + tile.height > this.camera.y && tile.y < this.camera.y + this.camera.height) {
+            if (tile.x + tile.width > this.camera.x && tile.x < this.camera.x + WORLD_WIDTH &&
+                tile.y + tile.height > this.camera.y && tile.y < this.camera.y + WORLD_HEIGHT) {
                 tile.render();
             }
         });

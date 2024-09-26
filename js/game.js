@@ -35,16 +35,30 @@ class Player {
         this.width = TILE_SIZE;
         this.height = TILE_SIZE;
         this.speed = 200;
+        this.sprite = document.getElementById('playerDown');
+        this.direction = 'down';
     }
 
     update(deltaTime, input, map) {
         let newX = this.x;
         let newY = this.y;
 
-        if (input.ArrowLeft) newX -= this.speed * deltaTime;
-        if (input.ArrowRight) newX += this.speed * deltaTime;
-        if (input.ArrowUp) newY -= this.speed * deltaTime;
-        if (input.ArrowDown) newY += this.speed * deltaTime;
+        if (input.ArrowLeft) {
+            newX -= this.speed * deltaTime;
+            this.direction = 'left';
+        }
+        if (input.ArrowRight) {
+            newX += this.speed * deltaTime;
+            this.direction = 'right';
+        }
+        if (input.ArrowUp) {
+            newY -= this.speed * deltaTime;
+            this.direction = 'up';
+        }
+        if (input.ArrowDown) {
+            newY += this.speed * deltaTime;
+            this.direction = 'down';
+        }
 
         if (!this.checkCollision(newX, newY, map)) {
             this.x = newX;
@@ -64,8 +78,7 @@ class Player {
     render(cameraX, cameraY) {
         const screenX = this.x - cameraX;
         const screenY = this.y - cameraY;
-        ctx.fillStyle = 'red';
-        ctx.fillRect(screenX, screenY, this.width, this.height);
+        ctx.drawImage(this.sprite, screenX, screenY, this.width, this.height);
     }
 }
 

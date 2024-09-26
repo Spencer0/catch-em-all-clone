@@ -74,7 +74,7 @@ class Game {
         this.lastTime = 0;
         this.accumulator = 0;
         this.step = 1 / 60;
-        this.player = new Player(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
+        this.player = null;
         this.camera = {
             x: 0,
             y: 0,
@@ -83,6 +83,7 @@ class Game {
         };
         this.input = {};
         this.map = [];
+        this.spawnPoint = { x: 0, y: 0 };
 
         window.addEventListener('keydown', (e) => this.input[e.code] = true);
         window.addEventListener('keyup', (e) => this.input[e.code] = false);
@@ -120,6 +121,10 @@ class Game {
                     case 'w': tileType = 'water'; break;
                     case 'b': tileType = 'bridge'; break;
                     case 'g': tileType = 'grass'; break;
+                    case 's': 
+                        tileType = 'grass';
+                        this.spawnPoint = { x: x * TILE_SIZE, y: y * TILE_SIZE };
+                        break;
                     default: tileType = 'grass';
                 }
                 
@@ -138,6 +143,9 @@ class Game {
             }
             y++;
         }
+
+        // Create the player at the spawn point
+        this.player = new Player(this.spawnPoint.x, this.spawnPoint.y);
     }
 
     loop(currentTime) {

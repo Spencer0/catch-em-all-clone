@@ -4,10 +4,10 @@
     "tiles": [
         "w225",
         "w1g223w1",
-        "w1g223w1",
-        "w1g223w1",
+        "w1g10u1g212w1",
+        "w1g10u3g210w1",
         "w1g71w9g71w1g71w1",
-        "w1g71w1g7w1g71w1g71w1",
+        "w1g71w1g7w1g70u1w1g71w1",
         "w1g71w1g7w1g71w1g71w1",
         "w1g71w1g7w1g71w1g71w1",
         "w1g71w1g7w1g71w1g71w1",
@@ -26,8 +26,8 @@
         "w1g71w1g7w1g71w1g71w1",
         "w1g71w9g71w1g71w1",
         "w1g111s1g111w1",
-        "w1g223w1",
-        "w1g223w1",
+        "w1g10u1g212w1",
+        "w1g10u3g210w1",
         "w225"
     ]
 }

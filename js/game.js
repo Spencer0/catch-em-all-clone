@@ -69,7 +69,7 @@ class Player {
             this.currentSprite = this.sprites.down;
         }
 
-        if (!this.checkCollision(newX, newY, map)) {
+        if (!this.checkCollision(newX, newY, map) && !this.isCollidingWithBush(newX, newY, map)) {
             this.x = newX;
             this.y = newY;
         }
@@ -82,6 +82,17 @@ class Player {
     checkCollision(x, y, map) {
         const tempPlayer = { x, y, width: this.width, height: this.height };
         return CollisionManager.checkCollision(tempPlayer, map);
+    }
+
+    isCollidingWithBush(x, y, map) {
+        const tempPlayer = { x, y, width: this.width, height: this.height };
+        return map.some(tile => 
+            tile.type === 'bush' &&
+            x < tile.x + tile.width &&
+            x + this.width > tile.x &&
+            y < tile.y + tile.height &&
+            y + this.height > tile.y
+        );
     }
 
     render(cameraX, cameraY) {
@@ -151,6 +162,7 @@ class Game {
                     case 'w': tileType = 'water'; break;
                     case 'b': tileType = 'bridge'; break;
                     case 'g': tileType = 'grass'; break;
+                    case 'u': tileType = 'bush'; break;
                     case 's': 
                         tileType = 'grass';
                         this.spawnPoint = { x: x * TILE_SIZE, y: y * TILE_SIZE };

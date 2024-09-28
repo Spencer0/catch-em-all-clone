@@ -1,3 +1,4 @@
+// Global constants
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -10,6 +11,11 @@ canvas.height = TILE_SIZE * VISIBLE_TILES;
 // Set the game world size
 const WORLD_WIDTH = 10800;
 const WORLD_HEIGHT = 5472;
+
+// Ensure PokemonMenu and DialogueManager are available globally
+if (typeof PokemonMenu === 'undefined' || typeof DialogueManager === 'undefined') {
+    console.error('PokemonMenu or DialogueManager is not defined. Make sure pokemon_menu.js and dialogue_manager.js are loaded before game.js');
+}
 
 class Tile {
     constructor(x, y, type) {

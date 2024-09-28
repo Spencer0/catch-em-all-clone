@@ -35,6 +35,8 @@ class Game {
         this.isPokemonMenuOpen = false;
         this.allPokemon = [];
         this.playerPokemon = [];
+        this.store = null;
+        this.isInStore = false;
 
         window.addEventListener('keydown', (e) => {
             this.input[e.code] = true;
@@ -287,18 +289,54 @@ class Game {
                 }
             }
         } else {
-            this.player.update(deltaTime, this.input, this.map, this.professorOak);
-            this.updateCamera();
-            this.resetSteppedTiles();
+            this.player.update(deltaTime, this.input, this.isInStore ? this.store.map : this.map, this.professorOak);
+            
+            if (!this.isInStore) {
+                this.updateCamera();
+                this.resetSteppedTiles();
 
-            if (this.input.Space && this.player.checkNearbyNPC(this.professorOak)) {
-                this.dialogueManager.startDialogue('professorOak');
-                this.input.Space = false;
+                if (this.input.Space && this.player.checkNearbyNPC(this.professorOak)) {
+                    this.dialogueManager.startDialogue('professorOak');
+                    this.input.Space = false;
+                }
+
+                // Check if player is in the center of the store tile
+                const storeTile = this.map.find(tile => tile.type === 'store');
+                if (storeTile) {
+                    const storeCenterX = storeTile.x + storeTile.width / 2;
+                    const storeCenterY = storeTile.y + storeTile.height / 2;
+                    if (Math.abs(this.player.x + this.player.width / 2 - storeCenterX) < 5 &&
+                        Math.abs(this.player.y + this.player.height / 2 - storeCenterY) < 5) {
+                        this.enterStore();
+                    }
+                }
+            } else {
+                if (this.store.isPlayerAtExit(this.player)) {
+                    this.exitStore();
+                }
             }
         }
         
         // Reset the Enter key input after processing
         this.input.Enter = false;
+    }
+
+    enterStore() {
+        this.isInStore = true;
+        if (!this.store) {
+            this.store = new Store(this);
+        }
+        this.player.x = 2 * TILE_SIZE;
+        this.player.y = 3 * TILE_SIZE;
+    }
+
+    exitStore() {
+        this.isInStore = false;
+        const storeTile = this.map.find(tile => tile.type === 'store');
+        if (storeTile) {
+            this.player.x = storeTile.x + storeTile.width / 2 - this.player.width / 2;
+            this.player.y = storeTile.y + storeTile.height;
+        }
     }
 
     resetSteppedTiles() {
@@ -319,6 +357,9 @@ class Game {
 
         if (this.isPokemonMenuOpen) {
             this.pokemonMenu.render(ctx);
+        } else if (this.isInStore) {
+            this.store.render(ctx);
+            this.player.render(0, 0);
         } else {
             let tilesRendered = 0;
             this.map.forEach(tile => {
@@ -339,14 +380,14 @@ class Game {
             }
 
             this.player.render(this.camera.x, this.camera.y);
+        }
 
-            if (this.dialogueManager && this.dialogueManager.isActive()) {
-                this.dialogueManager.render(ctx);
-            }
+        if (this.dialogueManager && this.dialogueManager.isActive()) {
+            this.dialogueManager.render(ctx);
+        }
 
-            if (this.menuManager && this.menuManager.isMenuOpen()) {
-                this.menuManager.render(ctx);
-            }
+        if (this.menuManager && this.menuManager.isMenuOpen()) {
+            this.menuManager.render(ctx);
         }
     }
 

@@ -9,8 +9,9 @@ class Tile {
         this.steppedImage = type === 'longGrass' ? document.getElementById('longGrassSteppedTile') : null;
         this.isSteppedOn = false;
         if (type === 'store') {
-            this.width = TILE_SIZE * 2;
-            this.height = TILE_SIZE * 2;
+            this.width = TILE_SIZE * 4;
+            this.height = TILE_SIZE * 4;
+            this.y -= TILE_SIZE * 2; // Move the store up by 2 tiles to align the bottom with the ground
         }
     }
 

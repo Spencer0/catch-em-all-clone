@@ -206,7 +206,18 @@ class Game {
                         break;
                     case 't':
                         tileType = 'store';
+                        // Skip the next 3 tiles to the right and 3 tiles down
+                        for (let i = 0; i < 4; i++) {
+                            for (let j = 0; j < 4; j++) {
+                                if (i === 0 && j === 0) continue; // Skip the current tile
+                                if (y + j < mapData.height && x + i < mapData.width) {
+                                    mapData.tiles[y + j][x + i] = 'x'; // Mark as occupied
+                                }
+                            }
+                        }
                         break;
+                    case 'x':
+                        continue; // Skip occupied tiles
                     default: tileType = 'grass';
                 }
                 let tile = new Tile(x * TILE_SIZE, y * TILE_SIZE, tileType);

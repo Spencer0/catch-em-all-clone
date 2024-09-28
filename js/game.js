@@ -328,6 +328,3 @@ class Game {
 }
 
 const game = new Game();
-console.log('Game instance created');
-// game.start() is now called after the map is loaded
-// DialogueManager class has been moved to dialogue_manager.js

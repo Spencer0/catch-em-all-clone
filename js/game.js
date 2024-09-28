@@ -293,13 +293,11 @@ class Game {
 
     createMap(mapData) {
         this.map = [];
-        let y = 0;
-        for (let row of mapData.tiles) {
-            let x = 0;
-            let i = 0;
-            while (i < row.length) {
+        for (let y = 0; y < mapData.height; y++) {
+            const row = mapData.tiles[y].split(',');
+            for (let x = 0; x < mapData.width; x++) {
                 let tileType;
-                switch (row[i]) {
+                switch (row[x]) {
                     case 'w': tileType = 'water'; break;
                     case 'b': tileType = 'bridge'; break;
                     case 'g': tileType = 'grass'; break;
@@ -321,29 +319,20 @@ class Game {
                         break;
                     default: tileType = 'grass';
                 }
-                
-                let count = 1;
-                if (i + 1 < row.length && !isNaN(parseInt(row[i + 1]))) {
-                    count = parseInt(row.slice(i + 1));
-                    i += count.toString().length + 1;
-                } else {
-                    i++;
-                }
-
-                for (let j = 0; j < count; j++) {
-                    let tile = new Tile(x * TILE_SIZE, y * TILE_SIZE, tileType);
-                    this.map.push(tile);
-                    x++;
-                }
+                let tile = new Tile(x * TILE_SIZE, y * TILE_SIZE, tileType);
+                this.map.push(tile);
             }
-            y++;
         }
 
         console.log(`Map created with ${this.map.length} tiles`);
 
         // Create the player at the spawn point
-        this.player = new Player(this.spawnPoint.x, this.spawnPoint.y);
-        console.log('Player created at', this.spawnPoint);
+        if (this.spawnPoint) {
+            this.player = new Player(this.spawnPoint.x, this.spawnPoint.y);
+            console.log('Player created at', this.spawnPoint);
+        } else {
+            console.error('No spawn point found in the map');
+        }
     }
 
     loop(currentTime) {

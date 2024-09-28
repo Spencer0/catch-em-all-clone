@@ -5,3 +5,10 @@
   <rect x="28" y="24" width="12" height="12" fill="#4682B4"/>
   <rect x="20" y="34" width="8" height="12" fill="#DEB887"/>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <rect x="4" y="36" width="88" height="56" fill="#8B4513"/>
+  <polygon points="2,36 48,4 94,36" fill="#A52A2A"/>
+  <rect x="16" y="48" width="24" height="24" fill="#4682B4"/>
+  <rect x="56" y="48" width="24" height="24" fill="#4682B4"/>
+  <rect x="40" y="68" width="16" height="24" fill="#DEB887"/>
+</svg>

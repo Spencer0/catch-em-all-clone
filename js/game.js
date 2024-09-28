@@ -179,6 +179,7 @@ class Game {
             if (e.code !== 'Enter') {
                 this.input[e.code] = true;
             }
+            console.log('KeyDown:', e.code);
         });
         window.addEventListener('keyup', (e) => {
             this.input[e.code] = false;

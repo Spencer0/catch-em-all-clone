@@ -1,6 +1,3 @@
-import { PokemonMenu } from './pokemon_menu.js';
-import { DialogueManager } from './dialogue_manager.js';
-
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 

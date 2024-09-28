@@ -9,8 +9,8 @@ canvas.width = TILE_SIZE * VISIBLE_TILES;
 canvas.height = TILE_SIZE * VISIBLE_TILES;
 
 // Set the game world size
-const WORLD_WIDTH = 10800;
-const WORLD_HEIGHT = 5472;
+const WORLD_WIDTH = 32 * TILE_SIZE;
+const WORLD_HEIGHT = 32 * TILE_SIZE;
 
 // Ensure PokemonMenu and DialogueManager are available globally
 if (typeof PokemonMenu === 'undefined' || typeof DialogueManager === 'undefined') {

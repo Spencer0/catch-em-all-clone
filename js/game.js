@@ -311,6 +311,7 @@ class Game {
                     }
                 }
             } else if (this.store) {
+                this.store.update(deltaTime);
                 if (this.store.isPlayerAtExit(this.player)) {
                     this.exitStore();
                 }
@@ -319,6 +320,16 @@ class Game {
         
         // Reset the Enter key input after processing
         this.input.Enter = false;
+    }
+
+    exitStore() {
+        this.isInStore = false;
+        const storeTile = this.map.find(tile => tile.type === 'store');
+        if (storeTile) {
+            this.player.x = storeTile.x + storeTile.width / 2 - this.player.width / 2;
+            this.player.y = storeTile.y + storeTile.height;
+        }
+        console.log('Exited store');  // Add this line for debugging
     }
 
     enterStore() {

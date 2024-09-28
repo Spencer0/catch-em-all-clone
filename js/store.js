@@ -36,6 +36,7 @@ class Store {
     isPlayerAtExit(player) {
         const exitX = this.exitTile.x * this.tileSize;
         const exitY = this.exitTile.y * this.tileSize;
-        return player.x === exitX && player.y === exitY;
+        return Math.abs(player.x - exitX) < this.tileSize / 2 &&
+               Math.abs(player.y - exitY) < this.tileSize / 2;
     }
 }

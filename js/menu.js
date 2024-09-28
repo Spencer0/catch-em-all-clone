@@ -17,11 +17,15 @@ class Menu {
     }
 
     up() {
-        this.selectedIndex = (this.selectedIndex - 1 + this.items.length) % this.items.length;
+        if (this.selectedIndex > 0) {
+            this.selectedIndex--;
+        }
     }
 
     down() {
-        this.selectedIndex = (this.selectedIndex + 1) % this.items.length;
+        if (this.selectedIndex < this.items.length - 1) {
+            this.selectedIndex++;
+        }
     }
 
     select() {

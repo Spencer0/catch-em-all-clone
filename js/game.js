@@ -176,10 +176,11 @@ class Game {
         this.menuManager = new MenuManager(this);
 
         window.addEventListener('keydown', (e) => {
-            if (e.code !== 'Enter') {
-                this.input[e.code] = true;
-            }
+            this.input[e.code] = true;
             console.log('KeyDown:', e.code);
+            if (e.code === 'Enter') {
+                e.preventDefault(); // Prevent default action for Enter key
+            }
         });
         window.addEventListener('keyup', (e) => {
             this.input[e.code] = false;
@@ -334,7 +335,10 @@ class Game {
 
     update(deltaTime, currentTime) {
         console.log('Updating game state');
-        if (this.dialogueManager.isActive()) {
+        if (this.menuManager.isMenuOpen()) {
+            console.log('Menu is open');
+            this.menuManager.handleInput(this.input);
+        } else if (this.dialogueManager.isActive()) {
             console.log('Dialogue is active');
             this.dialogueManager.update(currentTime);
             if (this.input.Space) {
@@ -353,6 +357,9 @@ class Game {
                 this.input.Space = false;
             }
         }
+        
+        // Reset the Enter key input after processing
+        this.input.Enter = false;
     }
 
     resetSteppedTiles() {
@@ -398,6 +405,11 @@ class Game {
         if (this.dialogueManager && this.dialogueManager.isActive()) {
             console.log('Rendering dialogue');
             this.dialogueManager.render(ctx);
+        }
+
+        if (this.menuManager && this.menuManager.isMenuOpen()) {
+            console.log('Rendering menu');
+            this.menuManager.render(ctx);
         }
     }
 

@@ -4,8 +4,8 @@ class Store {
         this.width = 5;
         this.height = 5;
         this.tileSize = TILE_SIZE;
-        this.map = this.createStoreMap();
         this.exitTile = { x: 2, y: 2 }; // Center tile as exit
+        this.map = this.createStoreMap();
     }
 
     createStoreMap() {

@@ -289,7 +289,7 @@ class Game {
                 }
             }
         } else {
-            this.player.update(deltaTime, this.input, this.isInStore ? this.store.map : this.map, this.professorOak);
+            this.player.update(deltaTime, this.input, this.isInStore && this.store ? this.store.map : this.map, this.professorOak);
             
             if (!this.isInStore) {
                 this.updateCamera();
@@ -310,7 +310,7 @@ class Game {
                         this.enterStore();
                     }
                 }
-            } else {
+            } else if (this.store) {
                 if (this.store.isPlayerAtExit(this.player)) {
                     this.exitStore();
                 }

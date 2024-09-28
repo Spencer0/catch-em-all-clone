@@ -1,3 +1,6 @@
+import { PokemonMenu } from './pokemon_menu.js';
+import { DialogueManager } from './dialogue_manager.js';
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -155,72 +158,7 @@ class Player {
     }
 }
 
-class PokemonMenu {
-    constructor(game) {
-        this.game = game;
-        this.selectedIndex = 0;
-        this.exitButtonIndex = 6; // Index for the exit button
-    }
-
-    up() {
-        this.selectedIndex = (this.selectedIndex - 3 + 7) % 7;
-    }
-
-    down() {
-        this.selectedIndex = (this.selectedIndex + 3) % 7;
-    }
-
-    left() {
-        if (this.selectedIndex % 3 > 0) {
-            this.selectedIndex--;
-        }
-    }
-
-    right() {
-        if (this.selectedIndex % 3 < 2 && this.selectedIndex < 6) {
-            this.selectedIndex++;
-        }
-    }
-
-    select() {
-        if (this.selectedIndex === this.exitButtonIndex) {
-            this.game.closePokemonMenu();
-        } else {
-            console.log(`Selected Pokemon in slot ${this.selectedIndex + 1}`);
-            // Add Pokemon selection logic here
-        }
-    }
-
-    render(ctx) {
-        // Draw background
-        ctx.fillStyle = '#f0f0f0';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Draw Pokemon boxes
-        for (let i = 0; i < 6; i++) {
-            const x = 50 + (i % 3) * 220;
-            const y = 50 + Math.floor(i / 3) * 220;
-            ctx.fillStyle = this.selectedIndex === i ? '#ffff00' : '#ffffff';
-            ctx.fillRect(x, y, 200, 200);
-            ctx.strokeRect(x, y, 200, 200);
-            
-            // You can add Pokemon sprites or names here
-            ctx.fillStyle = '#000000';
-            ctx.font = '20px Arial';
-            ctx.fillText(`Pokemon ${i + 1}`, x + 50, y + 100);
-        }
-
-        // Draw exit button
-        const exitX = canvas.width / 2 - 100;
-        const exitY = canvas.height - 80;
-        ctx.fillStyle = this.selectedIndex === this.exitButtonIndex ? '#ffff00' : '#ffffff';
-        ctx.fillRect(exitX, exitY, 200, 60);
-        ctx.strokeRect(exitX, exitY, 200, 60);
-        ctx.fillStyle = '#000000';
-        ctx.font = '24px Arial';
-        ctx.fillText('Exit', exitX + 80, exitY + 38);
-    }
-}
+// PokemonMenu class has been moved to pokemon_menu.js
 
 class Game {
     constructor() {
@@ -525,91 +463,4 @@ class Game {
 const game = new Game();
 console.log('Game instance created');
 // game.start() is now called after the map is loaded
-class DialogueManager {
-    constructor(dialogues) {
-        this.dialogues = dialogues;
-        this.currentDialogue = null;
-        this.currentIndex = 0;
-        this.text = '';
-        this.displayedText = '';
-        this.isTyping = false;
-        this.typingSpeed = 50; // milliseconds per character
-        this.lastTypingTime = 0;
-    }
-
-    startDialogue(npcKey) {
-        this.currentDialogue = this.dialogues[npcKey];
-        this.currentIndex = 0;
-        this.setText(this.currentDialogue[this.currentIndex].text);
-    }
-
-    setText(text) {
-        this.text = text;
-        this.displayedText = '';
-        this.isTyping = true;
-        this.lastTypingTime = performance.now();
-    }
-
-    update(currentTime) {
-        if (this.isTyping) {
-            if (currentTime - this.lastTypingTime > this.typingSpeed) {
-                this.displayedText += this.text[this.displayedText.length];
-                this.lastTypingTime = currentTime;
-                if (this.displayedText.length === this.text.length) {
-                    this.isTyping = false;
-                }
-            }
-        }
-    }
-
-    render(ctx) {
-        // Render dialogue box
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        ctx.fillRect(50, canvas.height - 150, canvas.width - 100, 100);
-        
-        // Render text
-        ctx.fillStyle = 'white';
-        ctx.font = '20px Arial';
-        ctx.fillText(this.currentDialogue[this.currentIndex].speaker + ':', 70, canvas.height - 120);
-        this.wrapText(ctx, this.displayedText, 70, canvas.height - 90, canvas.width - 140, 25);
-    }
-
-    wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-        const words = text.split(' ');
-        let line = '';
-
-        for (let n = 0; n < words.length; n++) {
-            const testLine = line + words[n] + ' ';
-            const metrics = ctx.measureText(testLine);
-            const testWidth = metrics.width;
-            if (testWidth > maxWidth && n > 0) {
-                ctx.fillText(line, x, y);
-                line = words[n] + ' ';
-                y += lineHeight;
-            } else {
-                line = testLine;
-            }
-        }
-        ctx.fillText(line, x, y);
-    }
-
-    progress() {
-        if (this.isTyping) {
-            // Fast forward text
-            this.displayedText = this.text;
-            this.isTyping = false;
-        } else {
-            // Move to next dialogue
-            this.currentIndex++;
-            if (this.currentIndex < this.currentDialogue.length) {
-                this.setText(this.currentDialogue[this.currentIndex].text);
-            } else {
-                this.currentDialogue = null;
-            }
-        }
-    }
-
-    isActive() {
-        return this.currentDialogue !== null;
-    }
-}
+// DialogueManager class has been moved to dialogue_manager.js

@@ -241,15 +241,22 @@ class Game {
     }
 
     loadMap() {
+        console.log('Loading map');
         fetch('js/map.json')
             .then(response => response.json())
             .then(data => {
+                console.log('Map data loaded');
                 this.createMap(data);
+                console.log('Map created');
                 this.start(); // Start the game loop after map is loaded
+            })
+            .catch(error => {
+                console.error('Error loading map:', error);
             });
     }
 
     createMap(mapData) {
+        console.log('Creating map');
         this.map = [];
         let y = 0;
         for (let row of mapData.tiles) {
@@ -297,12 +304,19 @@ class Game {
             y++;
         }
 
+        console.log(`Map created with ${this.map.length} tiles`);
+
         // Create the player at the spawn point
         this.player = new Player(this.spawnPoint.x, this.spawnPoint.y);
+        console.log('Player created at', this.spawnPoint);
     }
 
     loop(currentTime) {
-        if (!this.player || !this.dialogueManager) return; // Don't run the loop if player or dialogueManager is not created yet
+        console.log('Game loop started');
+        if (!this.player || !this.dialogueManager) {
+            console.log('Player or DialogueManager not initialized, skipping loop');
+            return;
+        }
 
         const deltaTime = (currentTime - this.lastTime) / 1000;
         this.lastTime = currentTime;
@@ -319,25 +333,30 @@ class Game {
     }
 
     update(deltaTime, currentTime) {
+        console.log('Updating game state');
         if (this.dialogueManager.isActive()) {
+            console.log('Dialogue is active');
             this.dialogueManager.update(currentTime);
             if (this.input.Space) {
                 this.dialogueManager.progress();
-                this.input.Space = false; // Reset space key to prevent multiple triggers
+                this.input.Space = false;
             }
         } else {
+            console.log('Updating player');
             this.player.update(deltaTime, this.input, this.map, this.professorOak);
             this.updateCamera();
             this.resetSteppedTiles();
 
             if (this.input.Space && this.player.checkNearbyNPC(this.professorOak)) {
+                console.log('Starting dialogue with Professor Oak');
                 this.dialogueManager.startDialogue('professorOak');
-                this.input.Space = false; // Reset space key to prevent multiple triggers
+                this.input.Space = false;
             }
         }
     }
 
     resetSteppedTiles() {
+        console.log('Resetting stepped tiles');
         const playerCenterX = this.player.x + this.player.width / 2;
         const playerCenterY = this.player.y + this.player.height / 2;
         this.map.forEach(tile => {
@@ -351,14 +370,20 @@ class Game {
     }
 
     render() {
+        console.log('Rendering game');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let tilesRendered = 0;
         this.map.forEach(tile => {
             if (tile.x + tile.width > this.camera.x && tile.x < this.camera.x + this.camera.width &&
                 tile.y + tile.height > this.camera.y && tile.y < this.camera.y + this.camera.height) {
                 tile.render(this.camera.x, this.camera.y);
+                tilesRendered++;
             }
         });
+        console.log(`Rendered ${tilesRendered} tiles`);
+
         if (this.professorOak) {
+            console.log('Rendering Professor Oak');
             const screenX = this.professorOak.x - this.camera.x;
             const screenY = this.professorOak.y - this.camera.y;
             if (screenX + this.professorOak.width > 0 && screenX < canvas.width &&
@@ -366,20 +391,25 @@ class Game {
                 ctx.drawImage(this.professorOak.image, screenX, screenY, this.professorOak.width, this.professorOak.height);
             }
         }
+
+        console.log('Rendering player');
         this.player.render(this.camera.x, this.camera.y);
 
         if (this.dialogueManager && this.dialogueManager.isActive()) {
+            console.log('Rendering dialogue');
             this.dialogueManager.render(ctx);
         }
     }
 
     start() {
+        console.log('Starting game');
         this.lastTime = performance.now();
         requestAnimationFrame(this.loop.bind(this));
     }
 }
 
 const game = new Game();
+console.log('Game instance created');
 // game.start() is now called after the map is loaded
 class DialogueManager {
     constructor(dialogues) {

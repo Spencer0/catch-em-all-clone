@@ -260,6 +260,10 @@ class Game {
             .then(response => response.json())
             .then(data => {
                 this.allPokemon = data.pokemon;
+                console.log('Pokemon data loaded:', this.allPokemon);
+            })
+            .catch(error => {
+                console.error('Error loading Pokemon data:', error);
             });
     }
 

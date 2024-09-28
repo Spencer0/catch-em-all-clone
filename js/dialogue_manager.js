@@ -69,6 +69,7 @@ class DialogueManager {
     }
 
     progress() {
+        console.log('Dialogue progress called');
         if (this.isTyping) {
             // Fast forward text
             this.displayedText = this.text;
@@ -76,11 +77,18 @@ class DialogueManager {
         } else {
             // Move to next dialogue
             this.currentIndex++;
+            console.log('Current dialogue index:', this.currentIndex);
             if (this.currentIndex < this.currentDialogue.length) {
                 this.setText(this.currentDialogue[this.currentIndex].text);
             } else {
+                console.log('End of dialogue reached');
+                console.log('Is first interaction:', this.isFirstInteraction);
+                console.log('Player Pokemon count:', this.game.playerPokemon.length);
                 if (this.isFirstInteraction && this.game.playerPokemon.length === 0) {
+                    console.log('Conditions met for giving first Pokemon');
                     this.giveFirstPokemon();
+                } else {
+                    console.log('Conditions not met for giving first Pokemon');
                 }
                 this.currentDialogue = null;
                 this.isFirstInteraction = false;
@@ -89,9 +97,14 @@ class DialogueManager {
     }
 
     giveFirstPokemon() {
+        console.log('Attempting to give first Pokemon');
+        console.log('All Pokemon:', this.game.allPokemon);
         const starterPokemon = this.game.allPokemon.slice(0, 3);
+        console.log('Starter Pokemon:', starterPokemon);
         const chosenPokemon = starterPokemon[Math.floor(Math.random() * starterPokemon.length)];
+        console.log('Chosen Pokemon:', chosenPokemon);
         this.game.playerPokemon.push(chosenPokemon);
+        console.log('Player Pokemon after giving:', this.game.playerPokemon);
         this.setText(`Congratulations! You received ${chosenPokemon.name} as your first Pokémon!`);
     }
 

@@ -177,9 +177,6 @@ class Game {
 
         window.addEventListener('keydown', (e) => {
             this.input[e.code] = true;
-            if (e.code === 'Enter') {
-                this.toggleMenu();
-            }
         });
         window.addEventListener('keyup', (e) => this.input[e.code] = false);
 

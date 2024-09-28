@@ -189,7 +189,6 @@ class Game {
 
         window.addEventListener('keydown', (e) => {
             this.input[e.code] = true;
-            console.log('KeyDown:', e.code);
             if (e.code === 'Enter') {
                 e.preventDefault(); // Prevent default action for Enter key
             }
@@ -275,7 +274,6 @@ class Game {
     }
 
     loadMap() {
-        console.log('Loading map');
         fetch('js/map.json')
             .then(response => response.json())
             .then(data => {
@@ -290,7 +288,6 @@ class Game {
     }
 
     createMap(mapData) {
-        console.log('Creating map');
         this.map = [];
         let y = 0;
         for (let row of mapData.tiles) {
@@ -346,7 +343,6 @@ class Game {
     }
 
     loop(currentTime) {
-        console.log('Game loop started');
         if (!this.player || !this.dialogueManager) {
             console.log('Player or DialogueManager not initialized, skipping loop');
             return;
@@ -367,9 +363,7 @@ class Game {
     }
 
     update(deltaTime, currentTime) {
-        console.log('Updating game state');
         if (this.isPokemonMenuOpen) {
-            console.log('Pokemon menu is open');
             if (this.input.ArrowUp) {
                 this.pokemonMenu.up();
                 this.input.ArrowUp = false;
@@ -384,23 +378,19 @@ class Game {
                 this.input.ArrowRight = false;
             }
         } else if (this.menuManager.isMenuOpen()) {
-            console.log('Menu is open');
             this.menuManager.handleInput(this.input);
         } else if (this.dialogueManager.isActive()) {
-            console.log('Dialogue is active');
             this.dialogueManager.update(currentTime);
             if (this.input.Space) {
                 this.dialogueManager.progress();
                 this.input.Space = false;
             }
         } else {
-            console.log('Updating player');
             this.player.update(deltaTime, this.input, this.map, this.professorOak);
             this.updateCamera();
             this.resetSteppedTiles();
 
             if (this.input.Space && this.player.checkNearbyNPC(this.professorOak)) {
-                console.log('Starting dialogue with Professor Oak');
                 this.dialogueManager.startDialogue('professorOak');
                 this.input.Space = false;
             }
@@ -411,7 +401,6 @@ class Game {
     }
 
     resetSteppedTiles() {
-        console.log('Resetting stepped tiles');
         const playerCenterX = this.player.x + this.player.width / 2;
         const playerCenterY = this.player.y + this.player.height / 2;
         this.map.forEach(tile => {
@@ -425,11 +414,9 @@ class Game {
     }
 
     render() {
-        console.log('Rendering game');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         if (this.isPokemonMenuOpen) {
-            console.log('Rendering Pokemon menu');
             this.pokemonMenu.render(ctx);
         } else {
             let tilesRendered = 0;
@@ -440,10 +427,8 @@ class Game {
                     tilesRendered++;
                 }
             });
-            console.log(`Rendered ${tilesRendered} tiles`);
 
             if (this.professorOak) {
-                console.log('Rendering Professor Oak');
                 const screenX = this.professorOak.x - this.camera.x;
                 const screenY = this.professorOak.y - this.camera.y;
                 if (screenX + this.professorOak.width > 0 && screenX < canvas.width &&
@@ -452,16 +437,13 @@ class Game {
                 }
             }
 
-            console.log('Rendering player');
             this.player.render(this.camera.x, this.camera.y);
 
             if (this.dialogueManager && this.dialogueManager.isActive()) {
-                console.log('Rendering dialogue');
                 this.dialogueManager.render(ctx);
             }
 
             if (this.menuManager && this.menuManager.isMenuOpen()) {
-                console.log('Rendering menu');
                 this.menuManager.render(ctx);
             }
         }

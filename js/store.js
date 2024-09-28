@@ -25,8 +25,8 @@ class Store {
     render(ctx) {
         this.map.forEach(tile => {
             if (tile.type === 'storeExit') {
-                ctx.fillStyle = 'red'; // Make exit tile red
-                ctx.fillRect(tile.x, tile.y, this.tileSize, this.tileSize);
+                const exitImage = document.getElementById('storeExitTile');
+                ctx.drawImage(exitImage, tile.x, tile.y, this.tileSize, this.tileSize);
             } else {
                 tile.render(0, 0);
             }

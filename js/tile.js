@@ -18,7 +18,13 @@ class Tile {
         const screenX = this.x - cameraX;
         const screenY = this.y - cameraY;
         const imageToRender = this.isSteppedOn && this.steppedImage ? this.steppedImage : this.image;
-        ctx.drawImage(imageToRender, screenX, screenY, this.width, this.height);
+        if (imageToRender && imageToRender.complete && imageToRender.naturalHeight !== 0) {
+            ctx.drawImage(imageToRender, screenX, screenY, this.width, this.height);
+        } else {
+            // Fallback rendering if image is not loaded
+            ctx.fillStyle = '#FF00FF'; // Magenta color for visibility
+            ctx.fillRect(screenX, screenY, this.width, this.height);
+        }
     }
 
     step() {

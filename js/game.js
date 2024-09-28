@@ -58,12 +58,25 @@ class Game {
             await Promise.all([
                 this.loadMap(),
                 this.loadDialogues(),
-                this.loadPokemonData()
+                this.loadPokemonData(),
+                this.loadImages()
             ]);
             this.start();
         } catch (error) {
             console.error('Error loading game:', error);
         }
+    }
+
+    loadImages() {
+        const images = document.querySelectorAll('img');
+        const imagePromises = Array.from(images).map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = reject;
+            });
+        });
+        return Promise.all(imagePromises);
     }
 
     handleEnterKeyUp() {

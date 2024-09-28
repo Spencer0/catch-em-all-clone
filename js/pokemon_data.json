@@ -1,0 +1,22 @@
+{
+  "pokemon": [
+    {
+      "id": 1,
+      "name": "Bulbasaur",
+      "type": "Grass",
+      "sprite": "assets/bulbasaur.svg"
+    },
+    {
+      "id": 4,
+      "name": "Charmander",
+      "type": "Fire",
+      "sprite": "assets/charmander.svg"
+    },
+    {
+      "id": 7,
+      "name": "Squirtle",
+      "type": "Water",
+      "sprite": "assets/squirtle.svg"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 class DialogueManager {
-    constructor(dialogues) {
+    constructor(dialogues, game) {
         this.dialogues = dialogues;
+        this.game = game;
         this.currentDialogue = null;
         this.currentIndex = 0;
         this.text = '';
@@ -8,6 +9,7 @@ class DialogueManager {
         this.isTyping = false;
         this.typingSpeed = 50; // milliseconds per character
         this.lastTypingTime = 0;
+        this.isFirstInteraction = true;
     }
 
     startDialogue(npcKey) {
@@ -77,9 +79,20 @@ class DialogueManager {
             if (this.currentIndex < this.currentDialogue.length) {
                 this.setText(this.currentDialogue[this.currentIndex].text);
             } else {
+                if (this.isFirstInteraction && this.game.playerPokemon.length === 0) {
+                    this.giveFirstPokemon();
+                }
                 this.currentDialogue = null;
+                this.isFirstInteraction = false;
             }
         }
+    }
+
+    giveFirstPokemon() {
+        const starterPokemon = this.game.allPokemon.slice(0, 3);
+        const chosenPokemon = starterPokemon[Math.floor(Math.random() * starterPokemon.length)];
+        this.game.playerPokemon.push(chosenPokemon);
+        this.setText(`Congratulations! You received ${chosenPokemon.name} as your first Pokémon!`);
     }
 
     isActive() {

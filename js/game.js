@@ -184,6 +184,8 @@ class Game {
         this.menuManager = new MenuManager(this);
         this.pokemonMenu = new PokemonMenu(this);
         this.isPokemonMenuOpen = false;
+        this.allPokemon = [];
+        this.playerPokemon = [];
 
         window.addEventListener('keydown', (e) => {
             this.input[e.code] = true;
@@ -201,6 +203,7 @@ class Game {
 
         this.loadMap();
         this.loadDialogues();
+        this.loadPokemonData();
         this.setupMainMenu();
     }
 
@@ -249,7 +252,15 @@ class Game {
             .then(response => response.json())
             .then(data => {
                 this.dialogues = data;
-                this.dialogueManager = new DialogueManager(this.dialogues);
+                this.dialogueManager = new DialogueManager(this.dialogues, this);
+            });
+    }
+
+    loadPokemonData() {
+        fetch('js/pokemon_data.json')
+            .then(response => response.json())
+            .then(data => {
+                this.allPokemon = data.pokemon;
             });
     }
 

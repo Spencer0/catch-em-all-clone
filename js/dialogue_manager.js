@@ -47,8 +47,12 @@ class DialogueManager {
         // Render text
         ctx.fillStyle = 'white';
         ctx.font = '20px Arial';
-        ctx.fillText(this.currentDialogue[this.currentIndex].speaker + ':', 70, canvas.height - 120);
-        this.wrapText(ctx, this.displayedText, 70, canvas.height - 90, canvas.width - 140, 25);
+        if (this.currentDialogue && this.currentDialogue[this.currentIndex]) {
+            ctx.fillText(this.currentDialogue[this.currentIndex].speaker + ':', 70, canvas.height - 120);
+            this.wrapText(ctx, this.displayedText, 70, canvas.height - 90, canvas.width - 140, 25);
+        } else {
+            ctx.fillText('No active dialogue', 70, canvas.height - 120);
+        }
 
         // Render starter selection UI if choosing
         if (this.isChoosingStarter) {
@@ -131,6 +135,6 @@ class DialogueManager {
     }
 
     isActive() {
-        return this.currentDialogue !== null || this.isChoosingStarter;
+        return (this.currentDialogue !== null && this.currentIndex < this.currentDialogue.length) || this.isChoosingStarter;
     }
 }

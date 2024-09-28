@@ -107,7 +107,7 @@ class Game {
     }
 
     loadDialogues() {
-        fetch('js/dialogues.json')
+        return fetch('js/dialogues.json')
             .then(response => response.json())
             .then(data => {
                 this.dialogues = data;
@@ -116,14 +116,11 @@ class Game {
     }
 
     loadPokemonData() {
-        fetch('js/pokemon_data.json')
+        return fetch('js/pokemon_data.json')
             .then(response => response.json())
             .then(data => {
                 this.allPokemon = data.pokemon;
                 console.log('Pokemon data loaded:', this.allPokemon);
-            })
-            .catch(error => {
-                console.error('Error loading Pokemon data:', error);
             });
     }
 

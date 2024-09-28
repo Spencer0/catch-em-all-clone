@@ -39,4 +39,8 @@ class Store {
         return Math.abs(player.x - exitX) < this.tileSize / 2 &&
                Math.abs(player.y - exitY) < this.tileSize / 2;
     }
+
+    update(deltaTime) {
+        // Add any store-specific update logic here if needed
+    }
 }

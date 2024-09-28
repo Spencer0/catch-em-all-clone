@@ -49,10 +49,21 @@ class Game {
             }
         });
 
-        this.loadMap();
-        this.loadDialogues();
-        this.loadPokemonData();
         this.setupMainMenu();
+        this.loadGame();
+    }
+
+    async loadGame() {
+        try {
+            await Promise.all([
+                this.loadMap(),
+                this.loadDialogues(),
+                this.loadPokemonData()
+            ]);
+            this.start();
+        } catch (error) {
+            console.error('Error loading game:', error);
+        }
     }
 
     handleEnterKeyUp() {
@@ -202,11 +213,6 @@ class Game {
     }
 
     loop(currentTime) {
-        if (!this.player || !this.dialogueManager) {
-            console.log('Player or DialogueManager not initialized, skipping loop');
-            return;
-        }
-
         const deltaTime = (currentTime - this.lastTime) / 1000;
         this.lastTime = currentTime;
 

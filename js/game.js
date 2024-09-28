@@ -279,9 +279,14 @@ class Game {
 
     loadMap() {
         fetch('js/map.json')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                console.log('Map data loaded');
+                console.log('Map data loaded:', data);
                 this.createMap(data);
                 console.log('Map created');
                 this.start(); // Start the game loop after map is loaded
@@ -293,9 +298,21 @@ class Game {
 
     createMap(mapData) {
         this.map = [];
+        if (!mapData || !mapData.tiles || !Array.isArray(mapData.tiles)) {
+            console.error('Invalid map data:', mapData);
+            return;
+        }
         for (let y = 0; y < mapData.height; y++) {
             const row = mapData.tiles[y];
+            if (!row || !Array.isArray(row)) {
+                console.error(`Invalid row at index ${y}:`, row);
+                continue;
+            }
             for (let x = 0; x < mapData.width; x++) {
+                if (x >= row.length) {
+                    console.error(`Row ${y} is shorter than expected width ${mapData.width}`);
+                    break;
+                }
                 let tileType;
                 switch (row[x]) {
                     case 'w': tileType = 'water'; break;

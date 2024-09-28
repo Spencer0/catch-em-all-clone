@@ -100,6 +100,9 @@ class DialogueManager {
             // Fast forward text
             this.displayedText = this.text;
             this.isTyping = false;
+        } else if (this.isChoosingStarter) {
+            // Do nothing, wait for player to choose
+            return;
         } else {
             // Move to next dialogue
             this.currentIndex++;
@@ -122,7 +125,9 @@ class DialogueManager {
     prepareStarterSelection() {
         this.isChoosingStarter = true;
         this.starterOptions = this.game.allPokemon.slice(0, 3);
-        this.setText("What starter would you like?");
+        this.setText("What starter would you like?\n1. Bulbasaur\n2. Charmander\n3. Squirtle");
+        this.currentDialogue = [{ speaker: "Professor Oak", text: this.text }];
+        this.currentIndex = 0;
     }
 
     chooseStarter(choice) {
@@ -131,6 +136,9 @@ class DialogueManager {
             this.game.playerPokemon.push(chosenPokemon);
             this.setText(`Congratulations! You received ${chosenPokemon.name} as your first Pokémon!`);
             this.isChoosingStarter = false;
+            this.currentDialogue = [{ speaker: "Professor Oak", text: this.text }];
+            this.currentIndex = 0;
+            this.isFirstInteraction = false;
         }
     }
 

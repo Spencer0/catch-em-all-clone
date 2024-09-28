@@ -294,7 +294,7 @@ class Game {
     createMap(mapData) {
         this.map = [];
         for (let y = 0; y < mapData.height; y++) {
-            const row = mapData.tiles[y].split(',');
+            const row = mapData.tiles[y];
             for (let x = 0; x < mapData.width; x++) {
                 let tileType;
                 switch (row[x]) {

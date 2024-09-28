@@ -389,6 +389,18 @@ class Game {
                 this.dialogueManager.progress();
                 this.input.Space = false;
             }
+            if (this.dialogueManager.isChoosingStarter) {
+                if (this.input.Digit1) {
+                    this.dialogueManager.chooseStarter(1);
+                    this.input.Digit1 = false;
+                } else if (this.input.Digit2) {
+                    this.dialogueManager.chooseStarter(2);
+                    this.input.Digit2 = false;
+                } else if (this.input.Digit3) {
+                    this.dialogueManager.chooseStarter(3);
+                    this.input.Digit3 = false;
+                }
+            }
         } else {
             this.player.update(deltaTime, this.input, this.map, this.professorOak);
             this.updateCamera();

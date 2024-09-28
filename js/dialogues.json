@@ -19,6 +19,14 @@
     {
       "speaker": "Professor Oak",
       "text": "Myself... I study Pokémon as a profession."
+    },
+    {
+      "speaker": "Professor Oak",
+      "text": "Now, it's time for you to choose your first Pokémon!"
+    },
+    {
+      "speaker": "Professor Oak",
+      "text": "What starter would you like?"
     }
   ]
 }

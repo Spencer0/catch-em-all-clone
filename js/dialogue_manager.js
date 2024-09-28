@@ -10,6 +10,8 @@ class DialogueManager {
         this.typingSpeed = 50; // milliseconds per character
         this.lastTypingTime = 0;
         this.isFirstInteraction = true;
+        this.isChoosingStarter = false;
+        this.starterOptions = [];
     }
 
     startDialogue(npcKey) {
@@ -47,6 +49,27 @@ class DialogueManager {
         ctx.font = '20px Arial';
         ctx.fillText(this.currentDialogue[this.currentIndex].speaker + ':', 70, canvas.height - 120);
         this.wrapText(ctx, this.displayedText, 70, canvas.height - 90, canvas.width - 140, 25);
+
+        // Render starter selection UI if choosing
+        if (this.isChoosingStarter) {
+            this.renderStarterSelection(ctx);
+        }
+    }
+
+    renderStarterSelection(ctx) {
+        const boxWidth = 300;
+        const boxHeight = 100;
+        const boxX = (canvas.width - boxWidth) / 2;
+        const boxY = canvas.height - 250;
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+
+        ctx.fillStyle = 'white';
+        ctx.font = '18px Arial';
+        this.starterOptions.forEach((pokemon, index) => {
+            ctx.fillText(`${index + 1}. ${pokemon.name}`, boxX + 20, boxY + 30 + index * 30);
+        });
     }
 
     wrapText(ctx, text, x, y, maxWidth, lineHeight) {
@@ -78,25 +101,36 @@ class DialogueManager {
             this.currentIndex++;
             if (this.currentIndex < this.currentDialogue.length) {
                 this.setText(this.currentDialogue[this.currentIndex].text);
+                if (this.text === "What starter would you like?") {
+                    this.prepareStarterSelection();
+                }
             } else {
                 if (this.isFirstInteraction && this.game.playerPokemon.length === 0) {
-                    this.giveFirstPokemon();
+                    this.prepareStarterSelection();
                 } else {
+                    this.currentDialogue = null;
+                    this.isFirstInteraction = false;
                 }
-                this.currentDialogue = null;
-                this.isFirstInteraction = false;
             }
         }
     }
 
-    giveFirstPokemon() {
-        const starterPokemon = this.game.allPokemon.slice(0, 3);
-        const chosenPokemon = starterPokemon[Math.floor(Math.random() * starterPokemon.length)];
-        this.game.playerPokemon.push(chosenPokemon);
-        this.setText(`Congratulations! You received ${chosenPokemon.name} as your first Pokémon!`);
+    prepareStarterSelection() {
+        this.isChoosingStarter = true;
+        this.starterOptions = this.game.allPokemon.slice(0, 3);
+        this.setText("What starter would you like?");
+    }
+
+    chooseStarter(choice) {
+        if (choice >= 1 && choice <= 3) {
+            const chosenPokemon = this.starterOptions[choice - 1];
+            this.game.playerPokemon.push(chosenPokemon);
+            this.setText(`Congratulations! You received ${chosenPokemon.name} as your first Pokémon!`);
+            this.isChoosingStarter = false;
+        }
     }
 
     isActive() {
-        return this.currentDialogue !== null;
+        return this.currentDialogue !== null || this.isChoosingStarter;
     }
 }

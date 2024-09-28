@@ -337,8 +337,8 @@ class Game {
         if (!this.store) {
             this.store = new Store(this);
         }
-        this.player.x = TILE_SIZE;
-        this.player.y = TILE_SIZE;
+        this.player.x = this.store.offsetX + TILE_SIZE;
+        this.player.y = this.store.offsetY + TILE_SIZE;
     }
 
     exitStore() {

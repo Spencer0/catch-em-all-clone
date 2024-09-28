@@ -6,6 +6,8 @@ class Store {
         this.tileSize = TILE_SIZE;
         this.exitTile = { x: 0, y: 0 }; // Top left tile as exit
         this.map = this.createStoreMap();
+        this.offsetX = (canvas.width - this.width * this.tileSize) / 2;
+        this.offsetY = (canvas.height - this.height * this.tileSize) / 2;
     }
 
     createStoreMap() {
@@ -23,6 +25,14 @@ class Store {
     }
 
     render(ctx) {
+        // Fill the entire canvas with black
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Render the store
+        ctx.save();
+        ctx.translate(this.offsetX, this.offsetY);
+
         this.map.forEach(tile => {
             if (tile.type === 'storeExit') {
                 const exitImage = document.getElementById('storeExitTile');
@@ -31,11 +41,13 @@ class Store {
                 tile.render(0, 0);
             }
         });
+
+        ctx.restore();
     }
 
     isPlayerAtExit(player) {
-        const exitX = this.exitTile.x * this.tileSize;
-        const exitY = this.exitTile.y * this.tileSize;
+        const exitX = this.exitTile.x * this.tileSize + this.offsetX;
+        const exitY = this.exitTile.y * this.tileSize + this.offsetY;
         return Math.abs(player.x - exitX) < this.tileSize / 2 &&
                Math.abs(player.y - exitY) < this.tileSize / 2;
     }

@@ -176,13 +176,28 @@ class Game {
         this.menuManager = new MenuManager(this);
 
         window.addEventListener('keydown', (e) => {
-            this.input[e.code] = true;
+            if (e.code !== 'Enter') {
+                this.input[e.code] = true;
+            }
         });
-        window.addEventListener('keyup', (e) => this.input[e.code] = false);
+        window.addEventListener('keyup', (e) => {
+            this.input[e.code] = false;
+            if (e.code === 'Enter') {
+                this.handleEnterKeyUp();
+            }
+        });
 
         this.loadMap();
         this.loadDialogues();
         this.setupMainMenu();
+    }
+
+    handleEnterKeyUp() {
+        if (this.menuManager.isMenuOpen()) {
+            this.menuManager.selectCurrentItem();
+        } else {
+            this.toggleMenu();
+        }
     }
 
     setupMainMenu() {

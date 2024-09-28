@@ -76,9 +76,14 @@ class MenuManager {
                 this.currentMenu.up();
             } else if (input.ArrowDown) {
                 this.currentMenu.down();
-            } else if (input.Enter) {
-                this.currentMenu.select();
             }
+            // Remove the Enter key handling from here
+        }
+    }
+
+    selectCurrentItem() {
+        if (this.currentMenu) {
+            this.currentMenu.select();
         }
     }
 

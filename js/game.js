@@ -191,6 +191,9 @@ class Game {
                             image: document.getElementById('professorOak')
                         };
                         break;
+                    case 't':
+                        tileType = 'store';
+                        break;
                     default: tileType = 'grass';
                 }
                 let tile = new Tile(x * TILE_SIZE, y * TILE_SIZE, tileType);

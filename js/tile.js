@@ -8,6 +8,10 @@ class Tile {
         this.image = document.getElementById(`${type}Tile`);
         this.steppedImage = type === 'longGrass' ? document.getElementById('longGrassSteppedTile') : null;
         this.isSteppedOn = false;
+        if (type === 'store') {
+            this.width = TILE_SIZE * 2;
+            this.height = TILE_SIZE * 2;
+        }
     }
 
     render(cameraX, cameraY) {

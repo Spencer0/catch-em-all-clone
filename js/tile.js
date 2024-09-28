@@ -28,4 +28,4 @@ class Tile {
     }
 }
 
-export default Tile;
+// Tile class is now globally available

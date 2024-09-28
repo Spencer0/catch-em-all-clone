@@ -1,9 +1,3 @@
-import Tile from './tile.js';
-import Player from './player.js';
-import PokemonMenu from './pokemon_menu.js';
-import DialogueManager from './dialogue_manager.js';
-import MenuManager from './menu_manager.js';
-
 // Global constants
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -200,7 +194,7 @@ class Game {
 
         // Create the player at the spawn point
         if (this.spawnPoint) {
-            this.player = new Player(this.spawnPoint.x, this.spawnPoint.y);
+            this.player = new Player(this.spawnPoint.x, this.spawnPoint.y, CollisionManager);
             console.log('Player created at', this.spawnPoint);
         } else {
             console.error('No spawn point found in the map');

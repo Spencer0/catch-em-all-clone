@@ -1,6 +1,5 @@
-import CollisionManager from './collision_manager.js';
-
 class Player {
+    constructor(x, y, CollisionManager) {
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -114,4 +113,4 @@ class Player {
     }
 }
 
-export default Player;
+// Player class is now globally available

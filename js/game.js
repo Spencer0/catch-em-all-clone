@@ -416,7 +416,22 @@ class Game {
 
     update(deltaTime, currentTime) {
         console.log('Updating game state');
-        if (this.menuManager.isMenuOpen()) {
+        if (this.isPokemonMenuOpen) {
+            console.log('Pokemon menu is open');
+            if (this.input.ArrowUp) {
+                this.pokemonMenu.up();
+                this.input.ArrowUp = false;
+            } else if (this.input.ArrowDown) {
+                this.pokemonMenu.down();
+                this.input.ArrowDown = false;
+            } else if (this.input.ArrowLeft) {
+                this.pokemonMenu.left();
+                this.input.ArrowLeft = false;
+            } else if (this.input.ArrowRight) {
+                this.pokemonMenu.right();
+                this.input.ArrowRight = false;
+            }
+        } else if (this.menuManager.isMenuOpen()) {
             console.log('Menu is open');
             this.menuManager.handleInput(this.input);
         } else if (this.dialogueManager.isActive()) {
@@ -460,37 +475,43 @@ class Game {
     render() {
         console.log('Rendering game');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        let tilesRendered = 0;
-        this.map.forEach(tile => {
-            if (tile.x + tile.width > this.camera.x && tile.x < this.camera.x + this.camera.width &&
-                tile.y + tile.height > this.camera.y && tile.y < this.camera.y + this.camera.height) {
-                tile.render(this.camera.x, this.camera.y);
-                tilesRendered++;
+
+        if (this.isPokemonMenuOpen) {
+            console.log('Rendering Pokemon menu');
+            this.pokemonMenu.render(ctx);
+        } else {
+            let tilesRendered = 0;
+            this.map.forEach(tile => {
+                if (tile.x + tile.width > this.camera.x && tile.x < this.camera.x + this.camera.width &&
+                    tile.y + tile.height > this.camera.y && tile.y < this.camera.y + this.camera.height) {
+                    tile.render(this.camera.x, this.camera.y);
+                    tilesRendered++;
+                }
+            });
+            console.log(`Rendered ${tilesRendered} tiles`);
+
+            if (this.professorOak) {
+                console.log('Rendering Professor Oak');
+                const screenX = this.professorOak.x - this.camera.x;
+                const screenY = this.professorOak.y - this.camera.y;
+                if (screenX + this.professorOak.width > 0 && screenX < canvas.width &&
+                    screenY + this.professorOak.height > 0 && screenY < canvas.height) {
+                    ctx.drawImage(this.professorOak.image, screenX, screenY, this.professorOak.width, this.professorOak.height);
+                }
             }
-        });
-        console.log(`Rendered ${tilesRendered} tiles`);
 
-        if (this.professorOak) {
-            console.log('Rendering Professor Oak');
-            const screenX = this.professorOak.x - this.camera.x;
-            const screenY = this.professorOak.y - this.camera.y;
-            if (screenX + this.professorOak.width > 0 && screenX < canvas.width &&
-                screenY + this.professorOak.height > 0 && screenY < canvas.height) {
-                ctx.drawImage(this.professorOak.image, screenX, screenY, this.professorOak.width, this.professorOak.height);
+            console.log('Rendering player');
+            this.player.render(this.camera.x, this.camera.y);
+
+            if (this.dialogueManager && this.dialogueManager.isActive()) {
+                console.log('Rendering dialogue');
+                this.dialogueManager.render(ctx);
             }
-        }
 
-        console.log('Rendering player');
-        this.player.render(this.camera.x, this.camera.y);
-
-        if (this.dialogueManager && this.dialogueManager.isActive()) {
-            console.log('Rendering dialogue');
-            this.dialogueManager.render(ctx);
-        }
-
-        if (this.menuManager && this.menuManager.isMenuOpen()) {
-            console.log('Rendering menu');
-            this.menuManager.render(ctx);
+            if (this.menuManager && this.menuManager.isMenuOpen()) {
+                console.log('Rendering menu');
+                this.menuManager.render(ctx);
+            }
         }
     }
 

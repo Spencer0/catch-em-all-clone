@@ -1,10 +1,10 @@
 class Store {
     constructor(game) {
         this.game = game;
-        this.width = 5;
-        this.height = 5;
+        this.width = 12;
+        this.height = 12;
         this.tileSize = TILE_SIZE;
-        this.exitTile = { x: 0, y: 0 }; // Top left tile as exit
+        this.exitTile = { x: 5, y: 0 }; // Top center tile as exit
         this.map = this.createStoreMap();
         this.offsetX = (canvas.width - this.width * this.tileSize) / 2;
         this.offsetY = (canvas.height - this.height * this.tileSize) / 2;
@@ -16,6 +16,8 @@ class Store {
             for (let x = 0; x < this.width; x++) {
                 if (x === this.exitTile.x && y === this.exitTile.y) {
                     map.push(new Tile(x * this.tileSize, y * this.tileSize, 'storeExit'));
+                } else if (x === 0 || x === this.width - 1 || y === 0 || y === this.height - 1) {
+                    map.push(new Tile(x * this.tileSize, y * this.tileSize, 'storeWall'));
                 } else {
                     map.push(new Tile(x * this.tileSize, y * this.tileSize, 'storeFloor'));
                 }

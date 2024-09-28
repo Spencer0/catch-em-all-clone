@@ -289,7 +289,7 @@ class Game {
                 }
             }
         } else {
-            this.player.update(deltaTime, this.input, this.isInStore && this.store ? this.store.map : this.map, this.professorOak);
+            this.player.update(deltaTime, this.input, this.map, this.professorOak, this.isInStore, this.store);
             
             if (!this.isInStore) {
                 this.updateCamera();

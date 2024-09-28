@@ -57,4 +57,17 @@ class Store {
     update(deltaTime) {
         // Add any store-specific update logic here if needed
     }
+
+    checkCollision(x, y, width, height) {
+        for (const tile of this.map) {
+            if (tile.type === 'storeWall' &&
+                x < tile.x + this.tileSize &&
+                x + width > tile.x &&
+                y < tile.y + this.tileSize &&
+                y + height > tile.y) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
